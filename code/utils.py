@@ -54,3 +54,63 @@ def ClearDirectory(*args):
             if os.path.exists(path):
                 shutil.rmtree(path)
                 os.makedirs(path)
+
+#%% pre-process reference mask with edge as reference
+#  Resize and crop to realize expand
+def expandImage(im, expand_pixel=30):
+    expand_img = im
+    edge = cv2.Canny(expand_img, 50, 500)
+    width, height = edge.shape
+
+    edge_list = []
+    for i in range(width):
+        for j in range(height):
+            if edge[i, j] >= 100:
+                edge_list.append((i, j))
+
+    edge_tree = sklearn.neighbors.KDTree(edge_list)
+
+    for i in range(width):
+        for j in range(height):
+            dist, ind = edge_tree.query([(i, j)], k=1)
+            if expand_img[i, j] < 100 and dist < expand_pixel:
+                expand_img[i, j] = 255
+
+    # for the test
+    # cv2.imwrite('../data/tem/expand_mask.png', expand_img)
+    return expand_img
+
+def assignWeight2Mask(ref_mask):
+    edge = cv2.Canny(ref_mask, 50, 500)
+    width, height = ref_mask.shape
+
+    # extract central region without edge
+    ref_mask_no_edge = ref_mask - edge
+
+    # get coordinates of all edge pixels
+    edge_list = []
+    for i in range(width):
+        for j in range(height):
+            if edge[i, j] >= 100:
+                edge[i, j] = 127.5
+                edge_list.append((i, j))
+    
+    edge_tree = sklearn.neighbors.KDTree(edge_list)
+
+    new_ref_mask = ref_mask_no_edge + edge
+    
+    assign_scale = (np.log(99) - np.log(1.0/99))/(width/2)
+    print('assign scale:', assign_scale)
+
+    # loop over all pixels in the central area and compute it's distance to it's nearest edge
+    for i in range(width):
+        for j in range(height):
+            dist, ind = edge_tree.query([(i, j)], k=1)
+            if new_ref_mask[i, j] == 255:
+                ref_mask_no_edge[i, j] = sigmoid(dist * assign_scale) * 255
+            elif new_ref_mask[i, j] == 0:
+                ref_mask_no_edge[i, j] = sigmoid((-dist) * assign_scale) * 255
+
+    # merge central area with edge
+    ref_mask_new = ref_mask_no_edge + edge
+    return ref_mask_new
