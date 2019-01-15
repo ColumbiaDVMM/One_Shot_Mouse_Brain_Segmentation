@@ -4,7 +4,7 @@
 #  File Name: one_shot_training_all_region.py
 #  Author: Xu Zhang, Zhuowei Li, Columbia University
 #  Creation Date: 09-15-2018
-#  Last Modified: Mon Jan 14 22:06:02 2019
+#  Last Modified: Tue Jan 15 09:56:04 2019
 #
 #  Usage: python one_shot_training_all_region.py -h
 #  Description: Segment all 95 regions for brain image.
@@ -181,12 +181,11 @@ train_sequence = OneShotTrainingSequenceMultiRegion(training_image, training_mas
                                                     batch_size=args.batch_size, use_background=args.use_background,
                                                     no_ref_mask=args.no_ref_mask)
 
+validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
 if args.no_alignment:
-    validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
     test_image_dir = '{}/img/test_img/'.format(args.data_dir)
 else:
-    validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
-    test_image_dir = '{}/img/95_test_aligned/'.format(args.data_dir)
+    test_image_dir = '{}/img/test_img_aligned/{}/'.format(args.data_dir, args.source_name)
 
 # use training img as validation
 validation_sequence = OneShotValidationSequenceMultiRegion(validation_image_dir, '{}/mask/95_masks/'.format(args.data_dir),
@@ -277,7 +276,7 @@ for i in range(len(test_sequence)):
                                       test_sequence.file_name_list[i]), show_mask)
 
     transform_matrix = np.load(
-        "{}/95_transform_matrix/{}.npy".format(args.data_dir, test_sequence.file_name_list[i]))
+        "{}/transform_matrix/{}/{}.npy".format(args.data_dir, args.source_name, test_sequence.file_name_list[i]))
 
     new_index_output = None
     for idx, region_idx in enumerate(region_list):

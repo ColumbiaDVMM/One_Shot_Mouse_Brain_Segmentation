@@ -4,7 +4,7 @@
 #  File Name: align_image.py
 #  Author: Xu Zhang, Columbia University
 #  Creation Date: 09-15-2018
-#  Last Modified: Mon Jan 14 22:05:11 2019
+#  Last Modified: Tue Jan 15 10:30:05 2019
 #
 #  Usage: python align_image.py -h
 #  Description:
@@ -30,7 +30,7 @@ standard_height = 512
 standard_width = 512
 small_height = 256
 small_width = 256
-
+region_list = [0]
 
 if __name__ == '__main__':
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     source_name = args.source.split(".")[0]
 
-    im1 = cv2.imread("{}/img/training_color/{}".format(args.data_dir,
+    im1 = cv2.imread("{}/img/all_img_color/{}".format(args.data_dir,
                                                        args.source), cv2.IMREAD_UNCHANGED)
     im1 = cv2.resize(im1, (standard_width, standard_height))
     im1_gray_ori = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     width = sz[1]
     im1_color_small = cv2.resize(im1, (height, width))
     training_mask_list = []
-    for i in [3]:  # range(4):
-        mask1 = cv2.imread("{}/mask/training_masks/{}-{}.png".format(
-            args.data_dir, source_name, i + 1), cv2.IMREAD_GRAYSCALE)
+    for i in region_list: 
+        mask1 = cv2.imread("{}/mask/all_masks/{}-{}.png".format(
+            args.data_dir, source_name, i), cv2.IMREAD_GRAYSCALE)
         mask1 = cv2.resize(
             mask1,
             (standard_width,
@@ -69,36 +69,42 @@ if __name__ == '__main__':
             cv2.INTER_NEAREST)
         mask1[mask1 > 100] = 255
         mask1[mask1 <= 100] = 0
+
+        try:
+            os.stat(
+                "{}/img/test_img_aligned/{}/".format(args.data_dir, source_name))
+        except BaseException:
+            os.makedirs(
+                "{}/img/test_img_aligned/{}/".format(args.data_dir, source_name))
+
         cv2.imwrite(
             "{}/mask/training_masks_aligned/{}-{}.png".format(
                 args.data_dir,
                 source_name,
-                i + 1),
+                i),
             mask1)
         training_mask_list.append(mask1.copy())
 
-    cv2.imwrite("{}/img/training/{}.png".format(args.data_dir,
+    cv2.imwrite("{}/img/all_img/{}.png".format(args.data_dir,
                                                 source_name), im1_gray_ori)
 
     for filename in glob.glob(
-            "{}/img/test_img_color/*.*".format(args.data_dir)):
-        print(filename)
+            "{}/img/all_img_color/*.*".format(args.data_dir)):
+        print("processing: {}".format(filename))
         if 'png' in filename or 'jpeg' in filename or 'jpg' in filename:
             filename = filename.split('/')[-1]
             purefilename = filename.split('.')[0]
             im2 = cv2.imread(
-                "{}/img/test_img_color/{}".format(args.data_dir, filename), cv2.IMREAD_UNCHANGED)
+                "{}/img/all_img_color/{}".format(args.data_dir, filename), cv2.IMREAD_UNCHANGED)
             im2 = cv2.resize(im2, (standard_width, standard_height))
 
             test_mask_list = []
-            for i in [3]:  # range(4):
-                print("{}/mask/all_masks/{}-{}.png".format(args.data_dir,
-                                                           purefilename, i + 1))
+            for i in region_list: 
                 mask2 = cv2.imread(
                     "{}/mask/all_masks/{}-{}.png".format(
                         args.data_dir,
                         purefilename,
-                        i + 1),
+                        i),
                     cv2.IMREAD_GRAYSCALE)
                 mask2 = cv2.resize(
                     mask2, (standard_width, standard_height), cv2.INTER_NEAREST)

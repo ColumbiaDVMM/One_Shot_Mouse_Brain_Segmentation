@@ -4,7 +4,7 @@
 #  File Name: one_shot_training_multi_region.py
 #  Author: Xu Zhang, Zhuowei Li, Columbia University
 #  Creation Date: 09-15-2018
-#  Last Modified: Thu Jan 10 19:37:10 2019
+#  Last Modified: Tue Jan 15 10:28:12 2019
 #
 #  Usage: python one_shot_training_multi_region.py -h
 #  Description: Segment hippocampus region in brain image.
@@ -65,8 +65,6 @@ parser.add_argument("--no_ref_mask", action="store_true",
                     help="do not use reference mask")
 parser.add_argument("--no_alignment", action="store_true",
                     help="do not use alignment")
-parser.add_argument("--no_expand", action="store_true",
-                    help="Update reference mask or not")
 
 parser.add_argument('--loss', default='iou-multi-region', type=str)
 parser.add_argument('--metric', default='iou-multi-region', type=str)
@@ -130,8 +128,11 @@ else:
 
 k.set_image_data_format(data_format)
 
-training_image = cv2.imread('{}/img/training/{}.png'.format(args.data_dir,
+training_image = cv2.imread('{}/img/all_img/{}.png'.format(args.data_dir,
                                                             args.source_name), cv2.IMREAD_UNCHANGED)
+training_image = cv2.resize(
+                    training_image,
+                    image_size)
 
 # n channel + 1 background channel
 if args.use_background:
@@ -159,9 +160,14 @@ background_mask = np.zeros(
     (image_size[0],
      image_size[1]),
     dtype=np.uint8) + 255
+
 for idx, region_idx in enumerate(region_list):
-    tmp_mask = cv2.imread('{}/mask/training_masks_aligned/{}-{}.png'.format(args.data_dir,
+    tmp_mask = cv2.imread('{}/mask/all_masks/{}-{}.png'.format(args.data_dir,
                                                                             args.source_name, region_idx), cv2.IMREAD_UNCHANGED)
+    tmp_mask = cv2.resize(
+                tmp_mask,
+                image_size,
+                cv2.INTER_NEAREST)
     tmp_mask = cv2.threshold(tmp_mask, 100, 255, cv2.THRESH_BINARY)[1]
     if args.use_background:
         training_mask[:, :, idx + 1] = tmp_mask
@@ -193,8 +199,6 @@ for idx, region_idx in enumerate(region_list):
     else:
         ref_mask[:, :, idx] = weighted_reference_mask
 
-    ref_mask[:, :, idx] = weighted_reference_mask
-
 # set background mask
 if args.use_background:
     training_mask[:, :, 0] = background_mask
@@ -204,11 +208,9 @@ train_sequence = OneShotTrainingSequenceMultiRegion(training_image, training_mas
                                                     no_ref_mask=args.no_ref_mask, augmentation_number=args.augmentation_num)
 
 if args.no_alignment:
-    validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
-    test_image_dir = '{}/img/test_img/'.format(args.data_dir)
+    test_image_dir = '{}/img/all_img/'.format(args.data_dir)
     test_mask_dir = '{}/mask/all_masks/'.format(args.data_dir)
 else:
-    validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
     test_image_dir = '{}/img/test_img_aligned/{}/'.format(
         args.data_dir, args.source_name)
     test_mask_dir = '{}/mask/all_masks_aligned/{}/'.format(

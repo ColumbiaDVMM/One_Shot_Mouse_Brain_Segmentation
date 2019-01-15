@@ -1,10 +1,20 @@
-"""
-Run multiple parameter with multiple GPUs and one python script
-Usage: python run_all.py
-
-Author: Xu Zhang
-Email: xu.zhang@columbia.edu.cn
-"""
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# ===========================================================
+#  File Name: align_image.py
+#  Author: Xu Zhang, Columbia University
+#  Creation Date: 09-15-2018
+#  Last Modified: Tue Jan 15 10:36:41 2019
+#
+#  Usage: python run_multi_region_training.py
+#  Description:
+#
+#  Copyright (C) 2018 Xu Zhang
+#  All rights reserved.
+#
+#  This file is made available under
+#  the terms of the BSD license (see the COPYING file).
+# ===========================================================
 
 #! /usr/bin/env python2
 
@@ -46,9 +56,9 @@ gpu_set = ['0', '1']
 parameter_set = [\
     # one single region test
     #'--region_list=4 --loss=dice --metric=iou-multi-region ',
-    '--region_list=4 --loss=dice --metric=iou-multi-region --no_expand',
+    '--region_list=0 --loss=dice --metric=iou-multi-region --no_expand',
     #'--region_list=4 --loss=dice --metric=iou-multi-region --no_alignment --no_ref_mask ',
-    '--region_list=4 --loss=dice --metric=iou-multi-region --no_ref_mask ',
+    '--region_list=0 --loss=dice --metric=iou-multi-region ',
 
     # 4 region test, feel free to change the region list
     #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background --no_alignment ',
@@ -84,6 +94,8 @@ for source_idx, source in enumerate(source_list):
                      {}  --augmentation_num=20 --num_epochs=200 \
                     --gpu-id {} --idx={} '.format(source_name, parameter, gpu_set[source_idx % number_gpu], run)
 
+            if run == 0:
+                command = command + " --update_mask"
             print(command)
             p = subprocess.Popen(shlex.split(command))
             process_set.append(p)
