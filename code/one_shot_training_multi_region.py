@@ -67,6 +67,8 @@ parser.add_argument("--no_alignment", action="store_true",
                     help="do not use alignment")
 parser.add_argument("--no_expand", action="store_true",
                     help="do not use alignment")
+parser.add_argument("--no_weight", action="store_true",
+                    help="do not use alignment")
 parser.add_argument("--update_mask", action="store_true",
                     help="do not use alignment")
 
@@ -121,6 +123,8 @@ if args.no_alignment:
     suffix = suffix + '_nal'
 if args.no_expand:
     suffix = suffix + '_ne'
+if args.no_weight:
+    suffix = suffix + '_nw'
 
 for index in args.region_list.split('-'):
     region_list.append(int(index))
@@ -184,9 +188,14 @@ for idx, region_idx in enumerate(region_list):
         assert not args.update_mask
         os.stat('{}/ref_mask/{}-{}.png'.format(args.data_dir,
                                                args.source_name, region_idx))
+        os.stat('{}/ref_mask/{}-expand-{}.png'.format(args.data_dir,
+                                               args.source_name, region_idx))
         weighted_training_mask = cv2.imread('{}/ref_mask/{}-{}.png'.format(args.data_dir,
                                                                            args.source_name, region_idx), cv2.IMREAD_UNCHANGED)
         weighted_reference_mask = weighted_training_mask.astype(np.float32)
+        expand_training_mask = cv2.imread('{}/ref_mask/{}-expand-{}.png'.format(args.data_dir,
+                                                                           args.source_name, region_idx), cv2.IMREAD_UNCHANGED)
+        expand_trainig_mask = expand_training_mask.astype(np.float32)
     except BaseException:
         expand_training_mask = utils.expandImage(
             tmp_mask.copy(), expand_pixel=25)
@@ -197,11 +206,16 @@ for idx, region_idx in enumerate(region_list):
             os.makedirs('{}/ref_mask/'.format(args.data_dir))
         cv2.imwrite('{}/ref_mask/{}-{}.png'.format(args.data_dir, args.source_name, region_idx),
                     weighted_reference_mask.astype(np.uint8))
+        cv2.imwrite('{}/ref_mask/{}-expand-{}.png'.format(args.data_dir, args.source_name, region_idx),
+                    expand_training_mask.astype(np.uint8))
 
     if args.no_expand:
         ref_mask[:, :, idx] = tmp_mask
     else:
-        ref_mask[:, :, idx] = weighted_reference_mask
+        if args.no_weight:
+            ref_mask[:, :, idx] = expand_training_mask
+        else:
+            ref_mask[:, :, idx] = weighted_reference_mask
 
 # set background mask
 if args.use_background:

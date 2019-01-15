@@ -217,4 +217,4 @@ if __name__ == '__main__':
                                                        flags=cv2.INTER_NEAREST + cv2.WARP_INVERSE_MAP, borderValue=(1))
                         mask2_aligned[mask2_aligned < 100] = 0
                         cv2.imwrite("{}/mask/all_masks_aligned/{}/{}-{}.png".format(
-                            args.data_dir, source_name, purefilename, 4), mask2_aligned)
+                            args.data_dir, source_name, purefilename, region_list[idx]), mask2_aligned)
