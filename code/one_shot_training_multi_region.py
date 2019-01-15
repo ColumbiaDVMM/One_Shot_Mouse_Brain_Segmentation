@@ -65,6 +65,10 @@ parser.add_argument("--no_ref_mask", action="store_true",
                     help="do not use reference mask")
 parser.add_argument("--no_alignment", action="store_true",
                     help="do not use alignment")
+parser.add_argument("--no_expand", action="store_true",
+                    help="do not use alignment")
+parser.add_argument("--update_mask", action="store_true",
+                    help="do not use alignment")
 
 parser.add_argument('--loss', default='iou-multi-region', type=str)
 parser.add_argument('--metric', default='iou-multi-region', type=str)

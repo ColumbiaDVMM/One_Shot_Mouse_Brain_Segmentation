@@ -77,14 +77,15 @@ number_gpu = len(gpu_set)
 process_set = []
 
 # run 2 times and record all the results. Run 10 times for final test.
-source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg', 'P4_100033295_317_r.jpg', 'P7_100073790_64_r.jpg', 'P14_100016572_56_r_crop.jpg',
-               'WT-P7-Nissl-3.jpeg', 'WT-P7-Nissl-5.jpeg', 'WT-P7-Nissl-6.jpeg']
+#source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg', 'P4_100033295_317_r.jpg', 'P7_100073790_64_r.jpg', 'P14_100016572_56_r_crop.jpg',
+#               'WT-P7-Nissl-3.jpeg', 'WT-P7-Nissl-5.jpeg', 'WT-P7-Nissl-6.jpeg']
+source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg']
 
 for source_idx, source in enumerate(source_list):
     command = 'python align_image.py --source={} '.format(source)
     source_name = source.split('.')[0]
     print(command)
-    subprocess.call(command, shell=True)
+    #subprocess.call(command, shell=True)
     for run in range(10):
         source_name = source.split('.')[0]
         for idx, parameter in enumerate(parameter_set):
@@ -94,8 +95,6 @@ for source_idx, source in enumerate(source_list):
                      {}  --augmentation_num=20 --num_epochs=200 \
                     --gpu-id {} --idx={} '.format(source_name, parameter, gpu_set[source_idx % number_gpu], run)
 
-            if run == 0:
-                command = command + " --update_mask"
             print(command)
             p = subprocess.Popen(shlex.split(command))
             process_set.append(p)
