@@ -4,7 +4,7 @@
 #  File Name: read_csv.py
 #  Author: Xu Zhang, Columbia University
 #  Creation Date: 09-15-2018
-#  Last Modified: Thu Jan 10 17:48:10 2019
+#  Last Modified: Tue Jan 15 14:43:40 2019
 #
 #  Usage: python read_csv.py
 #  Description: Get final result
@@ -40,9 +40,9 @@ def load_csv(csv_fn, sep="|"):
 
 
 source_image_set = ['mouse-brain-P56-sice-3-21-atlas_cropped', 'P4_100033295_317_r', 'P7_100073790_64_r', 'P14_100016572_56_r_crop',
-                    'WT-P7-Nissl-3', 'WT-P7-Nissl-5', 'WT-P7-Nissl-6']
+                    'WT-P7-Nissl-1', 'WT-P7-Nissl-2', 'WT-P7-Nissl-3']
 
-experiment_setting = ['4_mask', '4_nrm_nal', '4_nrm', '4_ne', '4']
+experiment_setting = ['0_nrm_nal', '0_nrm', '0_nw', '0']
 
 
 all_image_dict = {}

@@ -45,7 +45,7 @@ gpu_set = ['0', '1']
 
 parameter_set = [\
     # cross entropy seems much better than iou in this experiment
-    '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --no_expand ',
+    '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background ',
     #'--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --all_zeros ',
     '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --no_ref_mask ',
     #'--loss=cross_entropy --metric=iou-multi-region-with-background --use_background ',
@@ -57,8 +57,12 @@ parameter_set = [\
 
 number_gpu = len(gpu_set)
 process_set = []
+source = 'mouse-brain-P56-sice-3-21-atlas_cropped.jpg'
 
 for run in range(1):
+    command = 'python align_image.py --source={} '.format(source)
+    subprocess.call(command, shell=True)
+
     for idx, parameter in enumerate(parameter_set):
         print('Test Parameter: {}'.format(parameter))
 

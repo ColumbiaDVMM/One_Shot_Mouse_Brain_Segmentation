@@ -4,7 +4,7 @@
 #  File Name: align_image.py
 #  Author: Xu Zhang, Columbia University
 #  Creation Date: 09-15-2018
-#  Last Modified: Tue Jan 15 10:36:41 2019
+#  Last Modified: Tue Jan 15 14:44:15 2019
 #
 #  Usage: python run_multi_region_training.py
 #  Description:
@@ -80,7 +80,7 @@ process_set = []
 
 # run 2 times and record all the results. Run 10 times for final test.
 #source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg', 'P4_100033295_317_r.jpg', 'P7_100073790_64_r.jpg', 'P14_100016572_56_r_crop.jpg',
-#               'WT-P7-Nissl-3.jpeg', 'WT-P7-Nissl-5.jpeg', 'WT-P7-Nissl-6.jpeg']
+#               'WT-P7-Nissl-1.jpeg', 'WT-P7-Nissl-2.jpeg', 'WT-P7-Nissl-3.jpeg']
 source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg']
 
 for source_idx, source in enumerate(source_list):
@@ -111,3 +111,6 @@ for source_idx, source in enumerate(source_list):
 
     for sub_process in process_set:
         sub_process.wait()
+
+command = 'python read_csv.py '
+subprocess.call(command, shell=True)
