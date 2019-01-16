@@ -52,7 +52,17 @@ python run_all_region_training.py
 
 
 ## Result and Discussion
+We compare the proposed method with 3 baseline methods: 1) Source Mask (S.M.), directly regarding the source mask as output and using the inverse transformation g−1(·) to align the source mask back to the target image; 2) UNet, a model learned without image alignment nor reference mask (the conventional image segmentation setting); 3) UNet without reference mask (No Reference Mask), image alignment is applied to the target image, but the segmentation model is trained without the reference mask. Here shows some representative results.
 
+<img src="./fig/hippocampus_result.pdf" width="600"> 
+
+When training without image alignment and the reference mask, the performance is even worse than directly using the source mask to predict. It shows that, for one-shot brain segmentation problem, since the number of training images is quite limited, the deep neural network does not perform well without the brain atlas. Simply aligning the test image to the training image improves the segmentation performance. The proposed method is the clear winner over all the other baseline methods.
+
+Here shows the segmentation result of 95 detailed region using one single training image. The proposed algorithm shows clearly better result than model without reference mask.
+
+<img src="./fig/A-P56.pdf" width="400"> 
+
+<img src="./fig/all_results.pdf" width="400"> 
 
 ## Citation
 
