@@ -46,13 +46,8 @@ gpu_set = ['0', '1']
 parameter_set = [\
     # cross entropy seems much better than iou in this experiment
     '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background ',
-    #'--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --all_zeros ',
     '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --no_ref_mask ',
-    #'--loss=cross_entropy --metric=iou-multi-region-with-background --use_background ',
-    #'--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --no_ref_mask --no_alignment ',
-    #'--loss=iou-multi-region --metric=iou-multi-region --no_ref_mask ',
-    #'--loss=iou-multi-region --metric=iou-multi-region ',
-
+    '--loss=cross_entropy --metric=iou-multi-region-with-background --use_background --no_ref_mask --no_alignment ',
 ]
 
 number_gpu = len(gpu_set)

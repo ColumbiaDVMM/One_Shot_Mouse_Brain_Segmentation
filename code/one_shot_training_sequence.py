@@ -9,7 +9,7 @@ import utils
 
 class OneShotTrainingSequenceMultiRegion(Sequence):
     def __init__(self, image, mask, ref_mask, batch_size=4, use_background=True, no_ref_mask=False, augmentation_number=200,
-                 image_width=512, image_height=512):
+                 image_width=512, image_height=512, more_region=False):
 
         self.image = image
         self.mask = mask
@@ -20,6 +20,7 @@ class OneShotTrainingSequenceMultiRegion(Sequence):
         self.channel_number = mask.shape[-1]
         self.use_background = use_background
         self.no_ref_mask = no_ref_mask
+        self.more_region = more_region
         self.seq = iaa.Sequential([
             iaa.Add((-50, 50))
         ])
@@ -69,9 +70,8 @@ class OneShotTrainingSequenceMultiRegion(Sequence):
             if random.random() < -0.7:
                 angle = 0
             else:
-                #angle = random.uniform(-25, 25)
                 angle = random.uniform(-10, 10)
-                #angle = random.uniform(-45, 45)
+
             if random.random() < -0.5:
                 scale = 1.0
             else:
@@ -93,8 +93,9 @@ class OneShotTrainingSequenceMultiRegion(Sequence):
             translation_matrix = np.eye(3, dtype=np.float32)
             translation_matrix[0, 2] = random.randint(-25, 25)
             translation_matrix[1, 2] = random.randint(-25, 25)
-            #translation_matrix[0,2] = random.randint(-10, 10)
-            #translation_matrix[1,2] = random.randint(-10, 10)
+            if self.more_region:
+                translation_matrix[0,2] = random.randint(-10, 10)
+                translation_matrix[1,2] = random.randint(-10, 10)
 
             transform_matrix = np.matmul(
                 translation_matrix, np.matmul(

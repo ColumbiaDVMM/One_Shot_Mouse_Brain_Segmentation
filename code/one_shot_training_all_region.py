@@ -114,11 +114,10 @@ if args.no_ref_mask:
     suffix = suffix + '_nrm'
 if args.no_alignment:
     suffix = suffix + '_nal'
-if args.no_expand:
-    suffix = suffix + '_ne'
+#if args.no_expand:
+#    suffix = suffix + '_ne'
 if args.all_zeros:
     suffix = suffix + '_az'
-
 
 for index in range(1, 96):  # all regions
     region_list.append(int(index))
@@ -130,7 +129,7 @@ else:
 
 k.set_image_data_format(data_format)
 
-training_image = cv2.imread('{}/img/training/{}.png'.format(args.data_dir,
+training_image = cv2.imread('{}/img/all_img/{}.png'.format(args.data_dir,
                                                             args.source_name), cv2.IMREAD_UNCHANGED)
 
 # n channel + 1 background channel
@@ -179,11 +178,11 @@ if args.use_background:
 
 train_sequence = OneShotTrainingSequenceMultiRegion(training_image, training_mask, ref_mask,
                                                     batch_size=args.batch_size, use_background=args.use_background,
-                                                    no_ref_mask=args.no_ref_mask)
+                                                    no_ref_mask=args.no_ref_mask, more_region=True)
 
 validation_image_dir = '{}/img/validation_img/'.format(args.data_dir)
 if args.no_alignment:
-    test_image_dir = '{}/img/test_img/'.format(args.data_dir)
+    test_image_dir = '{}/img/all_img/'.format(args.data_dir)
 else:
     test_image_dir = '{}/img/test_img_aligned/{}/'.format(args.data_dir, args.source_name)
 
@@ -290,7 +289,7 @@ for i in range(len(test_sequence)):
         else:
             new_output = tmp_output.copy()
 
-        original_img = cv2.imread("{}/img/test_img/{}.png".format(args.data_dir,
+        original_img = cv2.imread("{}/img/all_img/{}.png".format(args.data_dir,
                                                                   test_sequence.file_name_list[i]), cv2.IMREAD_GRAYSCALE)
 
         new_output = cv2.resize(

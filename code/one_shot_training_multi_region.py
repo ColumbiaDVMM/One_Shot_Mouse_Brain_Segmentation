@@ -171,7 +171,7 @@ background_mask = np.zeros(
 
 for idx, region_idx in enumerate(region_list):
     tmp_mask = cv2.imread('{}/mask/all_masks/{}-{}.png'.format(args.data_dir,
-                                                                            args.source_name, region_idx), cv2.IMREAD_UNCHANGED)
+                                                                            args.source_name, region_idx), cv2.IMREAD_GRAYSCALE)
     tmp_mask = cv2.resize(
                 tmp_mask,
                 image_size,

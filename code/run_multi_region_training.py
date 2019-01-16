@@ -55,39 +55,23 @@ gpu_set = ['0','1']
 
 parameter_set = [\
     # one single region test
-    #'--region_list=4 --loss=dice --metric=iou-multi-region ',
-    #'--region_list=0 --loss=dice --metric=iou-multi-region ',
-    #'--region_list=4 --loss=dice --metric=iou-multi-region --no_alignment --no_ref_mask ',
-    #'--region_list=0 --loss=dice --metric=iou-multi-region --no_expand',
     '--region_list=0 --loss=dice --metric=iou-multi-region --no_weight',
     '--region_list=0 --loss=dice --metric=iou-multi-region ',
-
-    # 4 region test, feel free to change the region list
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background --no_alignment ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background --no_ref_mask ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background --no_alignment --no_ref_mask ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background ',
-
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region --no_alignment ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region --no_ref_mask ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background --no_ref_mask ',
-    #'--region_list=1-2-3-4 --loss=iou-multi-region --metric=iou-multi-region-with-background --use_background ',
+    '--region_list=0 --loss=dice --metric=iou-multi-region --no_alignment --no_ref_mask ',
+    '--region_list=0 --loss=dice --metric=iou-multi-region --no_ref_mask',
 ]
 
 number_gpu = len(gpu_set)
 process_set = []
 
 # run 2 times and record all the results. Run 10 times for final test.
-#source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg', 'P4_100033295_317_r.jpg', 'P7_100073790_64_r.jpg', 'P14_100016572_56_r_crop.jpg',
-#               'WT-P7-Nissl-1.jpeg', 'WT-P7-Nissl-2.jpeg', 'WT-P7-Nissl-3.jpeg']
-source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg']
+source_list = ['mouse-brain-P56-sice-3-21-atlas_cropped.jpg', 'P4_100033295_317_r.jpg', 'P7_100073790_64_r.jpg', 'P14_100016572_56_r_crop.jpg',
+               'WT-P7-Nissl-1.jpeg', 'WT-P7-Nissl-2.jpeg', 'WT-P7-Nissl-3.jpeg']
 
 for source_idx, source in enumerate(source_list):
     command = 'python align_image.py --source={} '.format(source)
     source_name = source.split('.')[0]
-    print(command)
-    #subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True)
     for run in range(10):
         source_name = source.split('.')[0]
         for idx, parameter in enumerate(parameter_set):
@@ -111,6 +95,7 @@ for source_idx, source in enumerate(source_list):
 
     for sub_process in process_set:
         sub_process.wait()
+    process_set = []
 
 command = 'python read_csv.py '
 subprocess.call(command, shell=True)
